@@ -1,0 +1,21 @@
+{
+  "name": "common-tree-func",
+  "version": "1.0.0",
+  "description": "常用tree函数",
+  "main": "cjs/index.js",
+  "module": "es/index.js",
+  "scripts": {
+    "clean:es": "rimraf es",
+    "clean:cjs": "rimraf cjs",
+    "build:es": "npm run clean:es && tsc",
+    "build:cjs": "npm run clean:cjs && tsc --outDir cjs --module commonjs",
+    "build:dist": "npm run build:es && npm run build:cjs",
+    "publish": "npm publish"
+  },
+  "author": "guojianqiang",
+  "license": "MIT",
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^4.2.3"
+  }
+}
