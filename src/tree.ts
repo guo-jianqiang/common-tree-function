@@ -22,16 +22,22 @@ export const deepClone: (obj: Object) => Object = (obj) => {
   return obj
 }
 
+type nodeType = { [index: string]: any }
+
 // 广度优先
-export function treeForeach<T extends { routes?: Array<T> }>(tree: Array<T>, func: (node: T) => void) {
+export const treeForeach = (
+  tree: Array<any> | Object,
+  func: (node: nodeType) => void,
+  childrenKey = 'children'
+) => {
   let node
-  const list = [...tree]
+  const list: Array<any> = Array.isArray(tree) ? [...tree] : [tree]
   while ((node = list.shift())) {
     func(node)
-    node.routes && list.push(...node.routes)
+    node[childrenKey] && list.push(...node[childrenKey])
   }
 }
-type nodeType = { [index: string]: any }
+
 /**
  * 深度优先遍历，返回节点信息及深度
  * @param tree 
