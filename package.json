@@ -1,6 +1,6 @@
 {
   "name": "common-tree-func",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "常用tree函数",
   "main": "dist/index.js",
   "files": [
@@ -10,8 +10,8 @@
     "tree"
   ],
   "scripts": {
-    "clean:es": "rimraf es",
-    "build:es": "npm run clean:es && tsc",
+    "clean:dist": "rimraf dist",
+    "build:dist": "npm run clean:dist && tsc",
     "publish": "npm publish"
   },
   "author": "guojianqiang",
