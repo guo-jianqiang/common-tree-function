@@ -44,17 +44,17 @@ export const treeForeach = (
  * @param func 
  * @param childrenKey 
  */
-export const treeDeepForeach = (
-  tree: Array<any> | Object,
-  func: (node: nodeType, deep: number) => void,
+export function treeDeepForeach<T> (
+  tree: T[] | T,
+  func: (node: T, deep: number) => void,
   childrenKey = 'children'
-) => {
+) {
   let deep = 0
-  const each = (node: nodeType) => {
+  const each = (node: T) => {
     deep++
     func(node, deep)
     if (node[childrenKey] && node[childrenKey].length) {
-      node[childrenKey].forEach((item: nodeType) => {
+      node[childrenKey].forEach((item: T) => {
         each(item)
       })
     }
@@ -68,6 +68,7 @@ export const treeDeepForeach = (
     each(tree)
   }
 }
+
 /**
  * @author guojianqiang
  * @description 查找匹配树节点并返回当前节点信息及深度
@@ -75,20 +76,20 @@ export const treeDeepForeach = (
  * @param func 
  * @param childrenKey
  */
-export const findTreeNode = (
-  tree: Array<any> | Object,
-  func: (node: nodeType) => boolean,
+export function findTreeNode<T> (
+  tree: T[] | T,
+  func: (node: T) => boolean,
   childrenKey = 'children'
-) => {
+) {
   let deep = 0
-  const find: (node: nodeType) => any = (node) => {
+  const find: (node: T, children: T[]) => T | null = (node, children = []) => {
     deep++
     if (func(node)) {
-      return { ...node, deep }
+      return { ...node, deep, sibling: children }
     }
     if (node[childrenKey] && node[childrenKey].length) {
       for (let item of node[childrenKey]) {
-        const rnode = find(item)
+        const rnode = find(item, node[childrenKey])
         if (rnode) return { ...rnode, deep }
       }
     }
@@ -97,11 +98,11 @@ export const findTreeNode = (
   }
   if (Array.isArray(tree)) {
     for (let item of tree) {
-      const rnode = find(item)
+      const rnode = find(item, tree)
       if (rnode) return rnode
     }
   } else if (typeof tree === 'object') {
-    return find(tree)
+    return find(tree, [])
   }
 }
 /**
@@ -187,7 +188,7 @@ export const treeToList = (
 export function getTreePath<T>(nodes: Array<T>, handler: (node: T) => {}, key = 'children') {
   nodes = !Array.isArray(nodes) ? [nodes] : [...nodes]
   const path: Array<T> = []
-  const getPaths = (tree: Array<any>): any => {
+  const getPaths = (tree: Array<T>): any => {
     for (let i = 0; i < tree.length; i++) {
       const item = tree[i]
       path.push(item)
