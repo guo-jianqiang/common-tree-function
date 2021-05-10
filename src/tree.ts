@@ -22,16 +22,14 @@ export const deepClone: (obj: Object) => Object = (obj) => {
   return obj
 }
 
-type nodeType = { [index: string]: any }
-
 // 广度优先
-export const treeForeach = (
-  tree: Array<any> | Object,
-  func: (node: nodeType) => void,
+export function treeForeach<T> (
+  tree: T[]| T,
+  func: (node: T) => void,
   childrenKey = 'children'
-) => {
+) {
   let node
-  const list: Array<any> = Array.isArray(tree) ? [...tree] : [tree]
+  const list: Array<T> = Array.isArray(tree) ? [...tree] : [tree]
   while ((node = list.shift())) {
     func(node)
     node[childrenKey] && list.push(...node[childrenKey])
@@ -111,21 +109,22 @@ export function findTreeNode<T> (
  * @param func 
  * @param childrenKey 
  */
-export const filterTree = (
-  tree: any,
-  func: (node: nodeType) => boolean,
+export function filterTree<T> (
+  tree: T[] | T,
+  func: (node: T) => boolean,
   childrenKey = 'children'
-) => {
-  let _tree
+) {
+  let _tree: T[]
   if (typeof tree !== 'object') {
     console.warn('the tree is not object')
     return []
   }
   if (!Array.isArray(tree)) {
     _tree = [tree]
+  } else {
+    _tree = [...tree]
   }
-  _tree = [...tree]
-  const filter: (arr: Array<any>) => Array<any> = (arr) => {
+  const filter: (arr: Array<T>) => Array<T> = (arr) => {
     return arr.map(node => ({...node})).filter((item) => {
       if (item[childrenKey] && item[childrenKey].length) item[childrenKey] = filter(item[childrenKey])
       if (item[childrenKey] && !item[childrenKey].length) delete item[childrenKey]
@@ -134,8 +133,6 @@ export const filterTree = (
   }
   return filter(_tree)
 }
-
-type listNodeType = {parentId: number | string, id: number | string, [key: string]: any}
 /**
  * 数组转树
  * @param list 
@@ -143,13 +140,13 @@ type listNodeType = {parentId: number | string, id: number | string, [key: strin
  * @param parentIdKey 父id键
  * @param defaultRootId 默认根级id
  */
-export const listToTree = (
-  list: Array<listNodeType>,
+export function listToTree<T> (
+  list: T[],
   childrenKey = 'children',
   parentIdKey = 'parentId',
   defaultRootId = 0
-) => {
-  const map = list.reduce((prevMap: any, current) => {
+) {
+  const map = list.reduce((prevMap: T, current: T & {id: number | string}) => {
     prevMap[current.id] = current
     return prevMap
   }, {})
@@ -166,11 +163,11 @@ export const listToTree = (
  * @param tree 
  * @param childrenKey 
  */
-export const treeToList = (
-  tree: any,
+export function treeToList<T> (
+  tree: T[] | T,
   childrenKey = 'children'
-) => {
-  const list: Array<any> = []
+) {
+  const list: Array<T> = []
   treeDeepForeach(tree, node => {
     list.push(node)
   }, childrenKey)
